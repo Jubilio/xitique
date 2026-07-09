@@ -109,6 +109,17 @@ export default function Sidebar({ userName, userEmail, isAdmin }: Props) {
               Sair
             </button>
           </form>
+          
+          <div style={{
+            marginTop: 16,
+            paddingTop: 16,
+            borderTop: '1px solid rgba(255,255,255,0.05)',
+            textAlign: 'center',
+            fontSize: 11,
+            color: 'var(--text-muted)'
+          }}>
+            Desenvolvido por <a href="https://nexovibe.netlify.app/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--green-400)', textDecoration: 'none', fontWeight: 600 }}>Nexo Vibe</a>
+          </div>
         </div>
       </nav>
     </>

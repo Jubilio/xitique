@@ -36,15 +36,22 @@ export default function CopiarConviteBtn({ token, nomeIntegrante, contacto, nome
     let tel = contacto.replace(/\s+/g, '').replace(/^0/, '258')
     if (!tel.startsWith('258') && tel.length === 9) tel = '258' + tel
 
-    const mensagem = encodeURIComponent(
-      `Olá, *${nomeIntegrante}*! 👋\n\n` +
-      `Foi adicionado(a) ao grupo de Xitique *${nomeGrupo}*.\n\n` +
-      `💰 Valor de contribuição: *${valorContribuicao.toLocaleString('pt-MZ')} MT*\n\n` +
-      `Por favor, acesse o link abaixo para confirmar os seus dados de recebimento e escolher a sua posição na roda:\n\n` +
-      `🔗 ${url}\n\n` +
-      `_Não precisa de criar conta — o link é só seu!_ 🙏`
-    )
+    // Build the message as a plain string first, then encode.
+    // Avoid decorative emojis that corrupt on some WhatsApp clients.
+    const linhas = [
+      `Ola, *${nomeIntegrante}*!`,
+      '',
+      `Foi adicionado(a) ao grupo de Xitique *${nomeGrupo}*.`,
+      `Valor de contribuicao: *${valorContribuicao.toLocaleString('pt-MZ')} MT*`,
+      '',
+      `Por favor, aceda ao link abaixo para confirmar os seus dados de recebimento e escolher a sua posicao na roda:`,
+      '',
+      url,
+      '',
+      `_Nao precisa de criar conta - o link e so seu!_`,
+    ]
 
+    const mensagem = encodeURIComponent(linhas.join('\n'))
     const whatsappUrl = `https://wa.me/${tel}?text=${mensagem}`
     window.open(whatsappUrl, '_blank')
     setMenuAberto(false)

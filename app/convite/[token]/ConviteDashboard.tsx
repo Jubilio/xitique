@@ -193,6 +193,24 @@ export default function ConviteDashboard({ payload, token }: Props) {
           </div>
         </div>
       )}
+
+      {/* Footer Branding */}
+      <div style={{
+        marginTop: 40,
+        textAlign: 'center',
+        fontSize: 12,
+        color: 'var(--text-muted)'
+      }}>
+        Xitique Fácil — Desenvolvido por{' '}
+        <a 
+          href="https://nexovibe.netlify.app/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          style={{ color: 'var(--green-400)', textDecoration: 'none', fontWeight: 600 }}
+        >
+          Nexo Vibe
+        </a>
+      </div>
     </div>
   )
 }
