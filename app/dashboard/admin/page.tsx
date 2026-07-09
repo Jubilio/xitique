@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { formatarMoeda, formatarData } from '@/lib/utils'
 import Link from 'next/link'
+import RealtimePendentes from '@/components/RealtimePendentes'
 
 export default async function AdminPage() {
   const supabase = await createClient()
@@ -175,49 +176,11 @@ export default async function AdminPage() {
           )}
         </div>
 
-        {/* Contribuições Pendentes */}
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">A aguardar confirmação</span>
-            <Link href="/dashboard/contribuicoes" className="btn btn-ghost btn-sm">Ver todas →</Link>
-          </div>
-          {pendentes && pendentes.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {pendentes.slice(0, 6).map((c: any) => (
-                <div key={c.id} style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px 14px',
-                  borderRadius: 10,
-                  background: 'var(--bg-input)',
-                  border: '1px solid var(--border)',
-                }}>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{c.integrante?.nome ?? '—'}</div>
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                      {c.grupo?.nome} · {formatarData(c.data_pagamento)}
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontWeight: 700, color: 'var(--amber-400)' }}>{formatarMoeda(c.valor)}</div>
-                    <span className="badge badge-amber" style={{ fontSize: 10 }}>Pendente</span>
-                  </div>
-                </div>
-              ))}
-              {pendentes.length > 6 && (
-                <Link href="/dashboard/contribuicoes" className="btn btn-ghost btn-sm" style={{ textAlign: 'center' }}>
-                  +{pendentes.length - 6} mais →
-                </Link>
-              )}
-            </div>
-          ) : (
-            <div className="empty-state" style={{ padding: 32 }}>
-              <div style={{ fontSize: 32, marginBottom: 8 }}>✓</div>
-              <div className="empty-state-title" style={{ fontSize: 14, color: 'var(--green-400)' }}>Tudo confirmado!</div>
-            </div>
-          )}
-        </div>
+        {/* Contribuições Pendentes — Real-Time */}
+        <RealtimePendentes 
+          contribuicoesIniciais={pendentes ?? []} 
+          grupoIds={grupoIds} 
+        />
 
         {/* Integrantes recentes */}
         <div className="card">

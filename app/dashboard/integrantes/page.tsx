@@ -17,11 +17,11 @@ export default async function IntegrantesPage() {
   const grupoIds = membros?.map(m => m.grupo_id) ?? []
   const isAdmin = membros?.some(m => m.role === 'admin') ?? false
 
-  let integrantes: (Integrante & { grupo?: { nome: string } })[] = []
+  let integrantes: (Integrante & { grupo?: { nome: string, valor_contribuicao: number } })[] = []
   if (grupoIds.length > 0) {
     const { data } = await supabase
       .from('integrantes')
-      .select('*, grupo:grupo_id(nome)')
+      .select('*, grupo:grupo_id(nome, valor_contribuicao)')
       .in('grupo_id', grupoIds)
       .order('created_at', { ascending: false })
     integrantes = (data as typeof integrantes) ?? []
@@ -107,7 +107,13 @@ export default async function IntegrantesPage() {
                     <td>{i.posicao_ordem ? `${i.posicao_ordem}º a receber` : 'Não definida'}</td>
                     <td>
                       {i.token_acesso ? (
-                        <CopiarConviteBtn token={i.token_acesso} />
+                        <CopiarConviteBtn 
+                          token={i.token_acesso} 
+                          nomeIntegrante={i.nome}
+                          contacto={i.contacto ?? ''}
+                          nomeGrupo={i.grupo?.nome ?? ''}
+                          valorContribuicao={i.grupo?.valor_contribuicao ?? 0}
+                        />
                       ) : (
                         <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Sem token</span>
                       )}
