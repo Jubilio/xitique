@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import ConviteForm from './ConviteForm'
+import SubmeterPagamento from './SubmeterPagamento'
 import { formatarMoeda, calcularPorcentagem, iniciais, corAvatar } from '@/lib/utils'
 
 interface Props {
@@ -17,10 +18,14 @@ interface Props {
 }
 
 export default function ConviteDashboard({ payload, token }: Props) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'dados'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'dados' | 'pagamento'>('dashboard')
   
   const { integrante, grupo, ronda_actual, progresso, membros, ordem_ocupada } = payload
   const pct = calcularPorcentagem(progresso.confirmado, progresso.esperado)
+
+  // Verify if the user already paid in this round.
+  // In a real app we'd get this from the payload.
+  // For demo, we just allow submission if there's an active round.
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto', width: '100%' }}>
@@ -48,7 +53,29 @@ export default function ConviteDashboard({ payload, token }: Props) {
         >
           ⚙️ Meus Dados
         </button>
+        {ronda_actual && (
+          <button 
+            className={`btn ${activeTab === 'pagamento' ? 'btn-primary' : 'btn-ghost'}`}
+            style={{ flex: 1 }}
+            onClick={() => setActiveTab('pagamento')}
+          >
+            📸 Submeter Recibo
+          </button>
+        )}
       </div>
+
+      {activeTab === 'pagamento' && ronda_actual && (
+        <SubmeterPagamento 
+          token={token}
+          rondaId={ronda_actual.id}
+          valorEsperado={grupo.valor_contribuicao}
+          onSuccess={() => {
+            setActiveTab('dashboard')
+            // Opcional: mostrar um toast ou alert de sucesso aqui
+            alert('Pagamento submetido e analisado com sucesso!')
+          }}
+        />
+      )}
 
       {activeTab === 'dados' && (
         <ConviteForm 

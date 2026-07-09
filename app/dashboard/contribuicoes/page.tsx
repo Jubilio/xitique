@@ -104,9 +104,16 @@ export default async function ContribuicoesPage() {
                       <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{labelMetodo(c.metodo)}</div>
                     </td>
                     <td>
-                      <span className={`badge badge-dot ${estadoBadge(c.estado)}`}>
-                        {estadoLabel(c.estado)}
-                      </span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start' }}>
+                        <span className={`badge badge-dot ${estadoBadge(c.estado)}`}>
+                          {estadoLabel(c.estado)}
+                        </span>
+                        {c.confirmado_por === 'Sistema IA' && (
+                          <span className="badge badge-green" style={{ fontSize: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
+                            🤖 Auto-Validado
+                          </span>
+                        )}
+                      </div>
                     </td>
                     {isAdmin && (
                       <td style={{ textAlign: 'right' }}>
