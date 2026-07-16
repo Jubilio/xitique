@@ -154,13 +154,32 @@ export default async function GrupoDetailsPage({ params }: PageProps) {
                       <div className={`timeline-dot ${statusClass}`}>
                         {o.posicao}
                       </div>
-                      <div className="timeline-content">
-                        <div className="timeline-name">{o.integrante?.nome}</div>
-                        <div className="timeline-meta">
-                          {o.estado === 'recebeu' 
-                            ? `Recebeu em ${o.data_recebimento ? formatarData(o.data_recebimento) : '-'}` 
-                            : isCurrent ? 'A receber nesta ronda' : 'Aguardando'}
+                      <div className="timeline-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                        <div>
+                          <div className="timeline-name">{o.integrante?.nome}</div>
+                          <div className="timeline-meta">
+                            {o.estado === 'recebeu' 
+                              ? `Recebeu em ${o.data_recebimento ? formatarData(o.data_recebimento) : '-'}` 
+                              : isCurrent ? 'A receber nesta ronda' : 'Aguardando'}
+                          </div>
                         </div>
+                        
+                        {isCurrent && activeRonda && (
+                          <form action={async () => {
+                            'use server'
+                            const { concluirRonda } = await import('@/app/actions/xitique')
+                            await concluirRonda(activeRonda.id, id, o.integrante_id)
+                          }}>
+                            <button 
+                              type="submit" 
+                              className="btn btn-primary" 
+                              style={{ padding: '6px 12px', fontSize: 12, borderRadius: 20 }}
+                              title="Confirmar que o membro recebeu o valor total e concluir esta ronda"
+                            >
+                              ✓ Marcar como Pago
+                            </button>
+                          </form>
+                        )}
                       </div>
                     </div>
                   )

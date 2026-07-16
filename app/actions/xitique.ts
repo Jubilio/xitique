@@ -252,6 +252,40 @@ export async function registarPagamentoBeneficiario(
   return { success: true }
 }
 
+export async function concluirRonda(
+  rondaId: string,
+  grupoId: string,
+  beneficiarioId: string
+): Promise<{ error?: string; success?: boolean }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Não autenticado.' }
+
+  // 1. Atualiza a ronda para concluída
+  const { error: rondaError } = await supabase
+    .from('rondas')
+    .update({ estado: 'concluida', data_fim: new Date().toISOString().split('T')[0] })
+    .eq('id', rondaId)
+
+  if (rondaError) return { error: rondaError.message }
+
+  // 2. Atualiza a ordem de recebimento do beneficiário
+  if (beneficiarioId) {
+    const { error: ordemError } = await supabase
+      .from('ordem_recebimento')
+      .update({ estado: 'recebeu', data_recebimento: new Date().toISOString() })
+      .eq('grupo_id', grupoId)
+      .eq('integrante_id', beneficiarioId)
+
+    if (ordemError) return { error: ordemError.message }
+  }
+
+  await registarAuditoria(supabase, user, 'concluir_ronda', 'rondas', rondaId, { grupoId, beneficiarioId })
+  revalidatePath(`/dashboard/grupos/${grupoId}`)
+  return { success: true }
+}
+
+
 // ─── AUDITORIA HELPER ────────────────────────────────────────
 async function registarAuditoria(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
