@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS grupos (
 CREATE TABLE IF NOT EXISTS integrantes (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   grupo_id uuid REFERENCES grupos(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL, -- conta de utilizador (opcional)
   nome varchar NOT NULL,
   contacto varchar,
   metodo_recebimento varchar,
@@ -35,12 +36,13 @@ CREATE TABLE IF NOT EXISTS integrantes (
   created_at timestamptz DEFAULT now()
 );
 
--- 3. GRUPO_MEMBROS (ligação utilizador admin ↔ grupo)
+-- 3. GRUPO_MEMBROS (ligação utilizador ↔ grupo, com referência ao integrante)
 CREATE TABLE IF NOT EXISTS grupo_membros (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   grupo_id uuid REFERENCES grupos(id) ON DELETE CASCADE,
   user_id uuid REFERENCES auth.users(id),
   role varchar NOT NULL DEFAULT 'admin',
+  integrante_id uuid REFERENCES integrantes(id) ON DELETE SET NULL, -- integrante ligado a esta conta
   created_at timestamptz DEFAULT now(),
   UNIQUE(grupo_id, user_id)
 );
