@@ -1,36 +1,34 @@
-import { createClient } from '@supabase/supabase-js'
+import fs from 'fs';
+import { createClient } from '@supabase/supabase-js';
+
+// Read and parse .env.local manually to avoid dotenv dependency
+const envFile = fs.readFileSync('.env.local', 'utf-8');
+const env = {};
+envFile.split('\n').forEach(line => {
+  const match = line.match(/^([^=]+)=(.*)$/);
+  if (match) env[match[1]] = match[2].trim();
+});
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // we need service role to bypass RLS or just use public key if RLS allows
-)
+  env['NEXT_PUBLIC_SUPABASE_URL'],
+  env['NEXT_PUBLIC_SUPABASE_ANON_KEY']
+);
 
-async function test() {
-  const token = '7b67f810-0a5b-4411-9497-3b0d0e149be1';
+async function testRpc() {
+  const token = process.argv[2] || '7b67f810-0a5b-4411-9497-3b0d0e149be1';
+  console.log(`Testando convite com token: ${token}`);
   
-  // 1. Check if the token exists
-  console.log("--- TESTANDO TOKEN ---")
-  const { data: member, error: err1 } = await supabase
-    .from('integrantes')
-    .select('*')
-    .eq('token_acesso', token)
-  console.log("Member by token:", member, err1)
-
-  // 2. Check if the function exists and what error it throws
-  console.log("\n--- TESTANDO FUNÇÃO RPC ---")
-  const { data: rpcData, error: rpcErr } = await supabase.rpc('get_dashboard_membro_por_token', {
+  const { data, error } = await supabase.rpc('get_dashboard_membro_por_token', {
     p_token: token
-  })
-  console.log("RPC Error:", rpcErr)
-  console.log("RPC Data:", rpcData ? "SUCCESS" : "NULL")
-
-  // 3. Test if the columns we added actually exist
-  console.log("\n--- TESTANDO SCHEMA ---")
-  const { data: cols, error: colErr } = await supabase
-    .from('integrantes')
-    .select('user_id')
-    .limit(1)
-  console.log("user_id column test:", colErr ? colErr.message : "Exists!")
+  });
+  
+  if (error) {
+    console.error("ERRO RPC ENCONTRADO:");
+    console.error(JSON.stringify(error, null, 2));
+  } else {
+    console.log("SUCESSO! Dados retornados:");
+    console.log(JSON.stringify(data, null, 2).substring(0, 500) + '...');
+  }
 }
 
-test()
+testRpc();
