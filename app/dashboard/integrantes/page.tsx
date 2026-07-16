@@ -68,64 +68,70 @@ export default async function IntegrantesPage() {
         <div className="card">
           <div className="table-container">
             <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Contacto</th>
-                  <th>Grupo</th>
-                  <th>Método</th>
-                  <th>Ordem</th>
-                  <th>Link Mágico (Acesso s/ Login)</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {integrantes.map((i) => (
-                  <tr key={i.id}>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div
-                          className="avatar avatar-sm"
-                          style={{
-                            background: corAvatar(i.nome) + '33',
-                            color: corAvatar(i.nome),
-                          }}
-                        >
-                          {iniciais(i.nome)}
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 600 }}>{i.nome}</div>
-                          <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{i.nome_conta || 'Conta não definida'}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{i.contacto}</td>
-                    <td>
-                      <span className="badge badge-blue">{i.grupo?.nome ?? '—'}</span>
-                    </td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{labelMetodo(i.metodo_recebimento)}</td>
-                    <td>{i.posicao_ordem ? `${i.posicao_ordem}º a receber` : 'Não definida'}</td>
-                    <td>
-                      {i.token_acesso ? (
-                        <CopiarConviteBtn 
-                          token={i.token_acesso} 
-                          nomeIntegrante={i.nome}
-                          contacto={i.contacto ?? ''}
-                          nomeGrupo={i.grupo?.nome ?? ''}
-                          valorContribuicao={i.grupo?.valor_contribuicao ?? 0}
-                        />
-                      ) : (
-                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Sem token</span>
-                      )}
-                    </td>
-                    <td>
-                      <span className={`badge badge-dot ${estadoBadge(i.estado)}`}>
-                        {estadoLabel(i.estado)}
-                      </span>
-                    </td>
+                <thead>
+                  <tr>
+                    <th>Integrante</th>
+                    <th>Contacto</th>
+                    <th>Grupo</th>
+                    <th>Dados Bancários</th>
+                    <th>Posição</th>
+                    <th>Convite</th>
+                    <th>Estado Perfil</th>
                   </tr>
-                ))}
-              </tbody>
+                </thead>
+                <tbody>
+                  {integrantes.map((i) => {
+                    const perfilCompleto = i.metodo_recebimento && i.conta_destino;
+                    return (
+                      <tr key={i.id}>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div className="avatar" style={{ background: corAvatar(i.nome) + '33', color: corAvatar(i.nome) }}>
+                              {iniciais(i.nome)}
+                            </div>
+                            <div style={{ fontWeight: 600 }}>{i.nome}</div>
+                          </div>
+                        </td>
+                        <td style={{ color: 'var(--text-secondary)' }}>{i.contacto}</td>
+                        <td>
+                          <span className="badge badge-blue">{i.grupo?.nome ?? '—'}</span>
+                        </td>
+                        <td style={{ color: 'var(--text-secondary)' }}>
+                          {perfilCompleto ? (
+                            <span>{labelMetodo(i.metodo_recebimento)} (***{i.conta_destino?.slice(-3)})</span>
+                          ) : (
+                            <span style={{ color: 'var(--amber-500)', fontSize: 12 }}>A aguardar...</span>
+                          )}
+                        </td>
+                        <td>{i.posicao_ordem ? `${i.posicao_ordem}º a receber` : 'Não definida'}</td>
+                        <td>
+                          {i.token_acesso ? (
+                            <CopiarConviteBtn 
+                              token={i.token_acesso} 
+                              nomeIntegrante={i.nome}
+                              contacto={i.contacto ?? ''}
+                              nomeGrupo={i.grupo?.nome ?? ''}
+                              valorContribuicao={i.grupo?.valor_contribuicao ?? 0}
+                            />
+                          ) : (
+                            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Sem token</span>
+                          )}
+                        </td>
+                        <td>
+                          {perfilCompleto ? (
+                            <span className="badge badge-dot badge-green">
+                              ✓ Confirmado
+                            </span>
+                          ) : (
+                            <span className="badge badge-dot badge-amber">
+                              ⏳ Pendente
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
             </table>
           </div>
         </div>
