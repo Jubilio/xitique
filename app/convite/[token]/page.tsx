@@ -21,6 +21,7 @@ export default async function ConvitePage({ params }: PageProps) {
   })
 
   if (error || !data) {
+    console.error("Erro no convite:", { token, error, data })
     return (
       <div className="app-layout" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 20 }}>
         <div className="empty-state card" style={{ padding: 40, maxWidth: 500 }}>
