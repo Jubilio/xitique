@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/client' // use standard client, RPC bypasses RLS
+import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import ConviteDashboard from './ConviteDashboard'
 
@@ -14,7 +14,7 @@ export default async function ConvitePage({ params }: PageProps) {
   }
 
   // Use the normal client to call the RPC function which has SECURITY DEFINER
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase.rpc('get_dashboard_membro_por_token', {
     p_token: token
