@@ -193,6 +193,33 @@ export default function ConviteDashboard({ payload, token }: Props) {
           </div>
         </div>
       )}
+      {/* Call to Action - Explorar Plataforma */}
+      <div style={{
+        marginTop: 40,
+        background: 'linear-gradient(to right, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.05))',
+        border: '1px solid var(--border)',
+        padding: 24,
+        borderRadius: 16,
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 12
+      }}>
+        <div style={{ fontSize: 32 }}>🚀</div>
+        <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>Gere o seu próprio grupo de Xitique?</h3>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 14, margin: 0, maxWidth: 450 }}>
+          Descubra como o <strong>Xitique Fácil</strong> pode ajudar o seu grupo a organizar contribuições, sorteios e pagamentos de forma transparente e 100% digital.
+        </p>
+        <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
+          <a href="/" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
+            Saber Mais
+          </a>
+          <a href="/register" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+            Criar Conta Grátis
+          </a>
+        </div>
+      </div>
 
       {/* Footer Branding */}
       <div style={{
